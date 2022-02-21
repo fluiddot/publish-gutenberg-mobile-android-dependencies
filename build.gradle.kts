@@ -1,7 +1,7 @@
 import org.json.JSONObject
 
 val defaultCompileSdkVersion = 30
-val defaultMinSdkVersion = 30
+val defaultMinSdkVersion = 21
 val defaultTargetSdkVersion = 30
 
 // Set project extra properties
@@ -30,51 +30,30 @@ plugins {
 
 subprojects {
     afterEvaluate {
-        if (name == "react-native-gesture-handler") {
-            apply { plugin("maven-publish") }
-            allprojects {
-                repositories {
-                    maven {
-                        setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
-                    }
-                    google()
+        apply { plugin("maven-publish") }
+        allprojects {
+            repositories {
+                maven {
+                    setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
                 }
-            }
-            configurations.all {
-                resolutionStrategy {
-                    force("com.facebook.react:react-native:+", "com.facebook.react:react-native:$rnVersion")
-                }
-            }
-            afterEvaluate {
-                publishing {
-                    publications {
-                        create<MavenPublication>(name) {
-                            from(components.get("release"))
-                        }
-                    }
-                }
+                google()
             }
         }
-        if (name == "react-native-reanimated") {
-            apply { plugin("maven-publish") }
-            allprojects {
-                repositories {
-                    maven {
-                        setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
-                    }
-                    google()
-                }
-            }
-            configurations.all {
-                resolutionStrategy {
-                    force("com.facebook.react:react-native:+", "com.facebook.react:react-native:$rnVersion")
-                }
-            }
-            afterEvaluate {
-                publishing {
-                    publications {
-                        create<MavenPublication>(name) {
-                            artifact(configurations.getByName("default").artifacts.getFiles().getSingleFile())
+        afterEvaluate {
+            publishing {
+                publications {
+                    create<MavenPublication>(name) {
+                        try {
+                            from(components.get("release"))
+                        } catch( e: Exception ) {
+                            println("'$name' - Release build variant not defined, trying to use default artifact.")
+
+                            val defaultArtifacts = configurations.getByName("default").artifacts
+                            if(defaultArtifacts.isEmpty()) {
+                                throw Exception("'$name' - No default artifact found, aborting publishing!")
+                            }
+                            val defaultArtifact = defaultArtifacts.getFiles().getSingleFile()
+                            artifact(defaultArtifact)
                         }
                     }
                 }
