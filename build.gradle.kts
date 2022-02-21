@@ -18,18 +18,14 @@ val packageDependencies = packageJson.optJSONObject("dependencies")
 val packageDevDependencies = packageJson.optJSONObject("devDependencies")
 val rnVersion = packageDevDependencies.optString("react-native")
 
-plugins {
-    id("com.android.library")
-    id("maven-publish")
-}
-
-android {
-    compileSdkVersion(defaultCompileSdkVersion)
-}
-
 allprojects {
     // group = "com.github.wordpress-mobile"
     group = "com.github.fluiddot"
+}
+
+plugins {
+    id("com.android.library") apply false
+    id("maven-publish")
 }
 
 subprojects {
@@ -39,14 +35,14 @@ subprojects {
             allprojects {
                 repositories {
                     maven {
-                       setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
+                        setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
                     }
                     google()
                 }
             }
             configurations.all {
                 resolutionStrategy {
-                    force("com.facebook.react:react-native:+", "com.facebook.react:react-native:0.66.2")
+                    force("com.facebook.react:react-native:+", "com.facebook.react:react-native:$rnVersion")
                 }
             }
             afterEvaluate {
@@ -64,21 +60,21 @@ subprojects {
             allprojects {
                 repositories {
                     maven {
-                       setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
+                        setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
                     }
                     google()
                 }
             }
             configurations.all {
                 resolutionStrategy {
-                    force("com.facebook.react:react-native:+", "com.facebook.react:react-native:0.66.2")
+                    force("com.facebook.react:react-native:+", "com.facebook.react:react-native:$rnVersion")
                 }
             }
             afterEvaluate {
                 publishing {
                     publications {
                         create<MavenPublication>(name) {
-                            artifact(configurations.default.artifacts.getFiles().getSingleFile())
+                            artifact(configurations.getByName("default").artifacts.getFiles().getSingleFile())
                         }
                     }
                 }
