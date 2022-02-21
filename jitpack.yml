@@ -1,0 +1,3 @@
+before_install:
+   - echo "Installing Javascript dependencies"
+   - ./gradlew -p android-npm npmInstall
