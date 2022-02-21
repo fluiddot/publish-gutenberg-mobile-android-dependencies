@@ -1,0 +1,14 @@
+{
+    "version": "0.0.1",
+    "dependencies": {
+        "react-native-reanimated": "2.4.1",
+        "react-native-gesture-handler": "2.2.0"
+    },
+    "devDependencies": {
+        "react-native": "0.66.4",
+        "patch-package": "6.2.2"
+    },
+    "scripts": {
+        "postinstall": "patch-package"
+    }
+}
