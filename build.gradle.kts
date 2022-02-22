@@ -30,7 +30,7 @@ plugins {
 
 subprojects {
     afterEvaluate {
-        apply { plugin("maven-publish") }
+        // Set React Native Mirror Maven repository
         allprojects {
             repositories {
                 maven {
@@ -39,15 +39,28 @@ subprojects {
                 google()
             }
         }
+
+        // Force that the dependency is built using the React Native version specified in package.json
+        configurations.all {
+            resolutionStrategy {
+                force("com.facebook.react:react-native:$rnVersion")
+            }
+        }
+
+        // Publish the dependency to Maven repository
+        apply { plugin("maven-publish") }
+
         afterEvaluate {
             publishing {
                 publications {
                     create<MavenPublication>(name) {
                         try {
+                            // By default we use the release build variant as the artifact
                             from(components.get("release"))
                         } catch( e: Exception ) {
                             println("'$name' - Release build variant not defined, trying to use default artifact.")
 
+                            // If release build variant is not defined, we try to use the first default artifact
                             val defaultArtifacts = configurations.getByName("default").artifacts
                             if(defaultArtifacts.isEmpty()) {
                                 throw Exception("'$name' - No default artifact found, aborting publishing!")
@@ -56,6 +69,8 @@ subprojects {
                             artifact(defaultArtifact)
                         }
 
+                        // Although the React Native version is forced for building, it's not reflected in the POM file.
+                        // For this reason, we need to directly modify the POM file.
                         pom.withXml {
                             val hasSingleNode = { xml: groovy.util.Node, name: String -> Boolean
                                 val nodeList = xml.get(name) as groovy.util.NodeList
@@ -78,7 +93,7 @@ subprojects {
                                     val artifactId = getSingleNode(dependencyNode, "artifactId") as groovy.util.Node
                                     val version = getSingleNode(dependencyNode, "version") as groovy.util.Node
                                     if(artifactId.text() == "react-native") {
-                                        println("Enforcing React Native version '$rnVersion' in POM of '$name'")
+                                        println("Enforcing React Native version '$rnVersion' in POM file of '$name'")
                                         version.setValue(rnVersion)
                                     }
                                 }
