@@ -55,6 +55,35 @@ subprojects {
                             val defaultArtifact = defaultArtifacts.getFiles().getSingleFile()
                             artifact(defaultArtifact)
                         }
+
+                        pom.withXml {
+                            val hasSingleNode = { xml: groovy.util.Node, name: String -> Boolean
+                                val nodeList = xml.get(name) as groovy.util.NodeList
+                                nodeList.size > 0
+                            }
+                            val getSingleNode = { xml: groovy.util.Node, name: String -> 
+                                val nodeList = xml.get(name) as groovy.util.NodeList
+                                if( nodeList.isEmpty() ) {
+                                    throw Exception("No '$name' node found.")
+                                }
+                                nodeList[0]
+                            }
+
+                            if( hasSingleNode(asNode(), "dependencies") ) {
+                                val dependenciesNode = getSingleNode(asNode(), "dependencies") as groovy.util.Node
+                                val dependenciesChildren = dependenciesNode.get("dependency") as groovy.util.NodeList
+                                dependenciesChildren.forEach {
+                                    val dependencyNode = it as groovy.util.Node
+                                    val groupId = getSingleNode(dependencyNode, "groupId") as groovy.util.Node
+                                    val artifactId = getSingleNode(dependencyNode, "artifactId") as groovy.util.Node
+                                    val version = getSingleNode(dependencyNode, "version") as groovy.util.Node
+                                    if(artifactId.text() == "react-native") {
+                                        println("Enforcing React Native version '$rnVersion' in POM of '$name'")
+                                        version.setValue(rnVersion)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
