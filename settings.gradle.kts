@@ -10,8 +10,8 @@ pluginManagement {
 }
 
 // Include package dependencies
-include(":react-native-gesture-handler")
-project(":react-native-gesture-handler").projectDir = File(rootProject.projectDir, "node_modules/react-native-gesture-handler/android")
-
 include(":react-native-reanimated")
-project(":react-native-reanimated").projectDir = File(rootProject.projectDir, "node_modules/react-native-reanimated/android")
+project(":react-native-reanimated").projectDir = File(rootProject.projectDir, "react-native-reanimated/android-npm")
+
+include(":react-native-reanimated-source")
+project(":react-native-reanimated-source").projectDir = File(rootProject.projectDir, "react-native-reanimated/android")
