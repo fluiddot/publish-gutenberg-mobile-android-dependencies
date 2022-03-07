@@ -13,7 +13,7 @@ project.ext.set("react", extra( mapOf(
 )))
 
 // Fetch dependencies versions from package.json
-val packageJson = JSONObject(File("package.json").readText())
+val packageJson = JSONObject(File("${rootDir}/package.json").readText())
 val packageDependencies = packageJson.optJSONObject("dependencies")
 val packageDevDependencies = packageJson.optJSONObject("devDependencies")
 val rnVersion = packageDevDependencies.optString("react-native")
