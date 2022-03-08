@@ -13,7 +13,7 @@ project.ext.set("react", extra( mapOf(
 )))
 
 // Fetch dependencies versions from package.json
-val packageJson = JSONObject(File("package.json").readText())
+val packageJson = JSONObject(File("${rootDir}/package.json").readText())
 val packageDependencies = packageJson.optJSONObject("dependencies")
 val packageDevDependencies = packageJson.optJSONObject("devDependencies")
 val rnVersion = packageDevDependencies.optString("react-native")
@@ -28,18 +28,18 @@ plugins {
     id("maven-publish")
 }
 
+allprojects {
+    repositories {
+        // Set React Native Mirror Maven repository
+        maven {
+            setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
+        }
+        google()
+    }
+}
+
 subprojects {
     afterEvaluate {
-        // Set React Native Mirror Maven repository
-        allprojects {
-            repositories {
-                maven {
-                    setUrl("https://a8c-libs.s3.amazonaws.com/android/react-native-mirror")
-                }
-                google()
-            }
-        }
-
         // Force that the dependency is built using the React Native version specified in package.json
         configurations.all {
             resolutionStrategy {
