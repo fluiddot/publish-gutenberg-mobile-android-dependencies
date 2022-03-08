@@ -1,3 +1,2 @@
-before_install:
-   - echo "Installing Javascript dependencies"
-   - ./gradlew -p android-npm npmInstall
+install:
+   - ./gradlew :react-native-gesture-handler:publishToMavenLocal
