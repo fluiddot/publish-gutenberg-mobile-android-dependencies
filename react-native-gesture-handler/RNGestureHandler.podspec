@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
   s.name         = "RNGestureHandler"
   s.version      = package["version"]
   s.summary      = package["description"]
-  s.homepage     = "https://github.com/software-mansion/react-native-gesture-handler"
+  s.homepage     = "https://github.com/wordpress-mobile/react-native-gesture-handler"
   s.license      = "MIT"
   s.author       = { package["author"]["name"] => package["author"]["email"] }
-  s.source       = { :git => "https://github.com/software-mansion/react-native-gesture-handler", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/wordpress-mobile/react-native-gesture-handler", :tag => "#{s.version}" }
   s.source_files = "ios/**/*.{h,m,mm}"
   s.requires_arc = true
 
